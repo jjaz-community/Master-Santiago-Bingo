@@ -17,4 +17,25 @@ button { padding: 12px 35px; border: none; border-radius: 8px; background: #6366
 .jjazz { background: linear-gradient(135deg, #a855f7, #7c3aed) !important; color: white !important; border: 3px solid #facc15; }
 .watermark { position: fixed; bottom: 20px; right: 25px; font-family: 'Orbitron', sans-serif; text-align: right; z-index: 100; opacity: 0.8; }
 .watermark span { font-size: 9px; color: #cbd5f5; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 2px; }
+
 .watermark div { font-size: 12px; color: #ffffff; font-weight: 700; letter-spacing: 1px; border-top: 1px solid rgba(255, 255, 255, 0.3); padding-top: 3px; }
+
+/* --- ส่วนหัวใหม่ (MASTER SANTIAGO) --- */
+.main-title {
+    font-size: 5rem; /* ขนาดใหญ่ที่สุด (ปรับได้ตามความชอบนะครับ) */
+    color: #00ffff; /* สีน้ำเงินเรืองแสง (Cyber Blue) */
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; /* เอฟเฟกต์เรืองแสงน้ำเงิน */
+    margin-bottom: 5px; /* ห่างลงมาเล็กน้อยจากบรรทัดที่สอง (0.1rem ก็ได้ถ้าอยากให้ชิดกว่านี้) */
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* --- บรรทัดที่สอง (WATCH PARTY WITH JJAZ) --- */
+.sub-title {
+    font-size: 1.5rem; /* ขนาดเล็กกว่า (ปรับได้ตามความชอบนะครับ) */
+    color: #ffffff; /* สีขาวเรืองแสง (White) */
+    text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff; /* เอฟเฟกต์เรืองแสงขาว */
+    margin-bottom: 20px; /* ห่างจากกล่องใส่ชื่อเล็กน้อย */
+    font-weight: bold;
+    text-transform: uppercase;
+}
