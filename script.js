@@ -1,7 +1,8 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbyP6x4HFkkg_Nu1A8TA2moD_q3MWSKeN7SmhIchW96wPFisjKhBixVXfTKIAkc5nutZkw/exec"; 
-const HOST_PASSWORD = "1234"; // รหัสสำหรับเข้าชื่อ JJAZ420 และใช้ส่งข้อมูลไป Google Sheet
+const HOST_PASSWORD = "1234"; 
 let myBoard = [];
 let markedByHost = [];
+let lastMapCode = ""; // เก็บเลขแมพล่าสุดเพื่อใช้เช็คการเปลี่ยนแมพ
 
 const BINGO_WORDS = [
   "ACE", "OP KILL", "KNIFE", "FLANK", "CLUTCH", "PLANT", "DEFUSE", 
@@ -11,7 +12,7 @@ const BINGO_WORDS = [
   "NICE TRY", "SAGE REZ", "ULT READY", "AFK", "SPY GLASS"
 ];
 
-// --- ฟังก์ชันสร้าง Seed เพื่อล็อคตาราง (คงที่ตาม ชื่อ+แมพ) ---
+// --- ฟังก์ชันสร้าง Seed เพื่อล็อคตาราง ---
 function cyrb128(str) {
     let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
     for (let i = 0, k; i < str.length; i++) {
@@ -37,8 +38,8 @@ function sfc32(a, b, c, d) {
     }
 }
 
-// --- ฟังก์ชันหลักเมื่อกดปุ่ม Generate ---
-function generateNewBoard() {
+// --- ฟังก์ชันหลักเมื่อกดปุ่ม Generate (ปรับเป็น Async เพื่อรองรับการ Clear) ---
+async function generateNewBoard() {
     const name = document.getElementById('username').value.trim();
     const mapCode = document.getElementById('map-code-input').value.trim();
 
@@ -47,35 +48,43 @@ function generateNewBoard() {
         return;
     }
 
-    // --- ระบบเช็ครหัสผ่านสำหรับสตรีมเมอร์ (JJAZ420) ---
     if (name === "JJAZ420") {
         const pass = prompt("กรุณาใส่รหัสผ่านสำหรับสตรีมเมอร์:");
         if (pass !== HOST_PASSWORD) {
-            alert("รหัสผ่านไม่ถูกต้อง! คุณไม่สามารถใช้ชื่อนี้ได้");
+            alert("รหัสผ่านไม่ถูกต้อง!");
             return;
         }
+
+        // ✨ ระบบล้างมาร์คอัตโนมัติเมื่อเปลี่ยนเลขแมพ
+        if (lastMapCode !== "" && lastMapCode !== mapCode) {
+            try {
+                await fetch(`${API_URL}?action=clear&key=${HOST_PASSWORD}`);
+                markedByHost = []; 
+                console.log("New map detected: Marks cleared.");
+            } catch (e) { console.error("Clear failed", e); }
+        }
+        lastMapCode = mapCode;
     }
 
-    // ล็อคชื่อและรหัสแมพโชว์บนบอร์ด
     document.getElementById('display-name').innerText = name;
     document.getElementById('display-map-code').innerText = mapCode;
 
-    // 1. สร้าง Seed จาก ชื่อ+แมพ (ทำให้ตารางคงเดิมทุกครั้งที่กรอกข้อมูลเดิม)
     const seed = cyrb128(name.toLowerCase() + mapCode.toLowerCase());
     const rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
 
-    // 2. สับคำศัพท์แบบคงที่ตาม Seed
     let tempWords = [...BINGO_WORDS];
     for (let i = tempWords.length - 1; i > 0; i--) {
         const j = Math.floor(rand() * (i + 1));
         [tempWords[i], tempWords[j]] = [tempWords[j], tempWords[i]];
     }
 
-    // 3. เลือก 24 คำและใส่ตรงกลาง
     let shuffled = tempWords.slice(0, 24);
     shuffled.splice(12, 0, "JJAZ"); 
     
     myBoard = shuffled;
+    
+    // ดึงข้อมูลมาร์คจากระบบก่อนวาดตาราง เพื่อให้มาร์คขึ้นทันที
+    await syncWithHost();
     renderBoard();
 }
 
@@ -95,7 +104,6 @@ function renderBoard() {
         
         cell.onclick = () => {
             const currentUser = document.getElementById('username').value.trim();
-            // เฉพาะ JJAZ420 ที่ใส่รหัสผ่านถูกเท่านั้นที่จะคลิกมาร์คคำได้
             if (currentUser === "JJAZ420") {
                 toggleMark(word);
             }
@@ -105,9 +113,6 @@ function renderBoard() {
 
     if (myBoard.length > 0) checkBingo();
 }
-
-// --- ฟังก์ชันอื่นๆ (checkBingo, triggerWinEffect, toggleMark, syncWithHost) ---
-// (ใช้โค้ดเดิมที่คุณมีได้เลยครับ หรือใส่ต่อท้ายให้ครบปีกกา)
 
 function checkBingo() {
     const cells = document.querySelectorAll('.cell');
@@ -128,14 +133,16 @@ function checkBingo() {
 function triggerWinEffect() {
     const overlay = document.getElementById('win-overlay');
     const video = document.getElementById('win-video');
-    if (overlay.style.display === 'flex') return;
+    if (!overlay || overlay.style.display === 'flex') return;
     overlay.style.display = 'flex';
     if (video) {
-        video.volume = 0.15;
+        video.volume = 0.25;
         video.currentTime = 0;
         video.play().catch(e => console.log("Autoplay blocked"));
     }
-    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#8c0ced', '#ffffff', '#ffff00'] });
+    if (typeof confetti === 'function') {
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#8c0ced', '#ffffff', '#ffff00'] });
+    }
 }
 
 function closeWin() {
@@ -147,15 +154,19 @@ function closeWin() {
 
 async function toggleMark(word) {
     if (word === "JJAZ") return;
+    
+    // UI Update ทันทีเพื่อความลื่นไหล
     if (markedByHost.includes(word)) {
         markedByHost = markedByHost.filter(w => w !== word);
     } else {
         markedByHost.push(word);
     }
     renderBoard();
+
+    // ส่งข้อมูลไปหลังบ้าน
     try {
         await fetch(`${API_URL}?action=setMark&word=${encodeURIComponent(word)}&key=${HOST_PASSWORD}`);
-    } catch (e) { console.error("Error:", e); }
+    } catch (e) { console.error("Error toggle:", e); }
 }
 
 async function syncWithHost() {
@@ -167,18 +178,15 @@ async function syncWithHost() {
     } catch (e) { console.log("Sync failed..."); }
 }
 
-// วางไว้ล่างสุดของไฟล์ script.js
+// --- ระบบคนดู Sync ทุก 20 วินาที พร้อม Jitter ---
 setInterval(() => {
     const userEl = document.getElementById('username');
     const currentUserName = userEl ? userEl.value.trim() : "";
 
-    // ถ้าไม่ใช่ JJAZ420 และมีการใส่ชื่อแล้ว ให้ดึงข้อมูลมาร์คจาก Host
     if (currentUserName !== "" && currentUserName !== "JJAZ420") {
-        // สุ่มเวลาหน่วง 0-5 วินาที เพื่อไม่ให้คนดู 200 คนยิง Google พร้อมกันเป๊ะๆ
         setTimeout(syncWithHost, Math.random() * 5000); 
     }
-}, 20000); // ทำงานทุกๆ 20 วินาที
+}, 20000);
 
-// เรียกครั้งแรกทันทีที่โหลดหน้าเว็บ เพื่อเช็คเผื่อมีมาร์คค้างอยู่
+// เรียกใช้ครั้งแรกเมื่อโหลดหน้าเว็บ
 syncWithHost();
-
