@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MASTER SANTIAGO BINGO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Prompt:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,11 +13,19 @@
     <div class="container">
         <header>
             <h1 class="main-title">MASTER SANTIAGO</h1>
-            <p class="sub-title">WATCH PARTY WITH JJAZ</p>
-
+            <p class="watch-party-text">WATCH PARTY WITH JJAZ</p>
+            
             <div class="user-box">
-                <input type="text" id="username" placeholder="TWITCH/YOUTUBE NAME">
-                <button class="btn-y2k" onclick="generateNewBoard()">GENERATE BINGO</button>
+                <input type="text" id="username" placeholder="NAME HERE">
+                <button class="btn-generate" onclick="generateNewBoard()">Generate Bingo</button>
+            </div>
+            
+            <div class="bingo-header">
+                <div>B</div>
+                <div>I</div>
+                <div class="special-letter">N</div>
+                <div>G</div>
+                <div>O</div>
             </div>
         </header>
 
@@ -26,5 +35,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
-
