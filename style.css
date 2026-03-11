@@ -139,17 +139,35 @@ header {
 
 /* ช่อง JJAZ สีม่วง */
 .special-cell {
-    background: #8a2be2 !important; 
-    color: #fff !important;
-    animation: pulse-special 2s infinite;
+    font-size: 1.4rem !important; /* ใหญ่ขึ้นกว่าเดิม */
+    font-weight: 900 !important; /* ตัวหนาสุดๆ */
+    color: #ffffff !important;
+    letter-spacing: 2px;
+    
+    /* พื้นหลังสีม่วงเข้มไล่เฉดให้ดูนูน */
+    background: linear-gradient(145deg, #a020f0, #4b0082) !important;
+    
+    /* ขอบเรืองแสงสีขาว-ม่วง */
+    border: 2px solid #ffffff !important; 
+    box-shadow: 0 0 15px #8a2be2, inset 0 0 10px rgba(255,255,255,0.5) !important;
+    
+    /* ใส่ Animation ให้ดูมีชีวิต */
+    animation: jjaz-glow 1.5s infinite alternate ease-in-out;
+    z-index: 10;
+    position: relative;
 }
 
-@keyframes pulse-special {
-    0% { transform: scale(1); box-shadow: 0 0 10px #8a2be2; }
-    50% { transform: scale(1.04); box-shadow: 0 0 20px #bf40bf; }
-    100% { transform: scale(1); box-shadow: 0 0 10px #8a2be2; }
+/* เอฟเฟกต์เรืองแสงวาบๆ */
+@keyframes jjaz-glow {
+    from {
+        transform: scale(1);
+        box-shadow: 0 0 10px #8a2be2, inset 0 0 5px rgba(255,255,255,0.3);
+    }
+    to {
+        transform: scale(1.08); /* ขยายใหญ่ขึ้นเล็กน้อยตอนกระพริบ */
+        box-shadow: 0 0 25px #bf40bf, 0 0 40px #8a2be2, inset 0 0 15px rgba(255,255,255,0.6);
+    }
 }
-
 .cell.marked:not(.special-cell) {
     background: #bf40bf !important;
     color: white !important;
@@ -162,6 +180,7 @@ header {
     .bingo-grid { gap: 6px; padding: 10px; }
     .cell { font-size: 0.6rem; border-radius: 6px; }
 }
+
 
 
 
