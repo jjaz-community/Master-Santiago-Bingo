@@ -159,42 +159,41 @@ header {
 }
 
 /* 1. สีเวลาคลิกมาร์คช่องปกติ (ให้สีเดียวกับ JJAZ) */
+/* --- 1. สีเวลาคลิกมาร์คช่องปกติ (ม่วงอ่อน ไม่ชมพู) --- */
 .cell.marked:not(.special-cell) {
-    background: #ab47bc !important; /* ม่วงอ่อนโทนสว่าง */
+    background: #9d50bb !important; /* เปลี่ยนเป็นม่วงโทนเย็น */
     color: white !important;
     text-shadow: 0 0 5px rgba(255,255,255,0.5);
-    border: 1px solid #ce93d8;
+    border: 1px solid #b19cd9;
 }
 
-/* 2. ช่อง JJAZ ตรงกลาง (ปรับม่วงอ่อนลง + Ultra Glow) */
+/* --- 2. ช่อง JJAZ ตรงกลาง (ม่วงอ่อน Lavender Neon) --- */
 .special-cell {
     font-size: 1.4rem !important;
     font-weight: 900 !important;
     color: #ffffff !important;
     letter-spacing: 2px;
     
-    /* พื้นหลังม่วงอ่อนไล่เฉด (Lavender Neon) */
-    background: linear-gradient(145deg, #ce93d8, #ab47bc) !important; 
+    /* ใช้สีม่วง Lavender ที่มีความสว่างแต่คงความม่วงไว้ */
+    background: linear-gradient(145deg, #b19cd9, #9d50bb) !important; 
     border: 2px solid #ffffff !important;
     
-    /* ใส่ Animation ให้ดูมีชีวิต */
     animation: jjaz-glow 1.5s infinite alternate ease-in-out;
     z-index: 10;
     position: relative;
 }
 
-/* เอฟเฟกต์เรืองแสงวาบๆ ของช่อง JJAZ (ใช้โทนม่วงสว่าง) */
+/* เอฟเฟกต์เรืองแสง (Glow) ให้เป็นสีม่วงโทนเย็น */
 @keyframes jjaz-glow {
     from { 
         transform: scale(1); 
-        box-shadow: 0 0 10px #ce93d8, inset 0 0 5px rgba(255,255,255,0.3); 
+        box-shadow: 0 0 10px #b19cd9, inset 0 0 5px rgba(255,255,255,0.3); 
     }
     to { 
         transform: scale(1.08); 
-        box-shadow: 0 0 25px #ea80fc, 0 0 40px #ce93d8, inset 0 0 15px rgba(255,255,255,0.6); 
+        box-shadow: 0 0 25px #9d50bb, 0 0 40px #b19cd9, inset 0 0 15px rgba(255,255,255,0.6); 
     }
 }
-
 /* --- Footer --- */
 footer {
     width: 100%;
@@ -220,3 +219,4 @@ footer p {
     .bingo-grid { gap: 8px; padding: 10px; }
     .cell { font-size: 0.55rem; border-radius: 6px; }
 }
+
