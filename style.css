@@ -15,15 +15,16 @@ body {
 }
 
 /* Background Video */
-#bg-video {
+/* เปลี่ยนจาก #bg-video เป็น #bg-image */
+#bg-image {
     position: fixed;
-    right: 0; 
-    bottom: 0;
-    min-width: 100%; 
-    min-height: 100%;
-    z-index: -1;
-    filter: brightness(0.3); /* ปรับให้วิดีโอมืดลงเพื่อให้ตัวหนังสือเด่น */
-    object-fit: cover;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* ให้อยู่หลังสุด */
+    object-fit: cover; /* ให้รูปคลุมเต็มจอพอดี */
+    filter: brightness(0.3); /* ปรับให้รูปมืดลงนิดนึงเพื่อให้ตัวหนังสือ MASTER SANTIAGO เด่นขึ้น */
 }
 
 .container {
@@ -180,5 +181,6 @@ header {
     .bingo-grid { gap: 5px; }
     .cell { font-size: 0.5rem; }
 }
+
 
 
