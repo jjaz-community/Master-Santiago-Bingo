@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>JJAZ420 BINGO - MASTER SANTIAGO WATCH PARTY</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MASTER SANTIAGO BINGO</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-        <video autoplay muted loop id="bg-video">
-        <source src="background.mp4" type="video/mp4">
-    </video>
+    <video autoplay muted loop id="bg-video">
+        <source src="background.mp4" type="video/mp4">
+    </video>
 
-    <div class="container">
-        <header>
-                        <h1 class="y2k-title main-title">MASTER SANTIAGO</h1>
-                        <p class="y2k-subtitle sub-title">WATCH PARTY WITH JJAZ</p>
+    <div class="container">
+        <header>
+            <h1 class="main-title">MASTER SANTIAGO</h1>
+            <p class="sub-title">WATCH PARTY WITH JJAZ</p>
 
-            <div class="user-box">
-                                <input type="text" id="username" placeholder="TWITCH/YOUTUBE NAME">
-                <button class="btn-y2k" onclick="generateNewBoard()">GENERATE BINGO</button>
-            </div>
-        </header>
+            <div class="user-box">
+                <input type="text" id="username" placeholder="TWITCH/YOUTUBE NAME">
+                <button class="btn-y2k" onclick="generateNewBoard()">GENERATE BINGO</button>
+            </div>
+        </header>
 
-                <div id="bingo-board" class="bingo-grid"></div>
-    </div>
+        <div id="bingo-board" class="bingo-grid"></div>
+    </div>
 
-        <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
