@@ -13,7 +13,9 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
 }
-
+body {
+    cursor: crosshair;
+}
 #bg-image {
     position: fixed;
     top: 0; left: 0;
@@ -323,6 +325,7 @@ footer p {
     .bingo-grid { gap: 8px; padding: 10px; }
     .cell { font-size: 0.55rem; border-radius: 6px; }
 }
+
 
 
 
