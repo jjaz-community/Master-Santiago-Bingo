@@ -21,7 +21,7 @@ body {
     height: 100vh;
     z-index: -1;
     object-fit: cover;
-    filter: brightness(0.4);
+    filter: brightness(0.4); /* ปรับพื้นหลังให้มืดลงเพื่อให้ตารางเด่น */
 }
 
 .container {
@@ -34,7 +34,7 @@ body {
     align-items: center;
 }
 
-/* --- Header Section --- */
+/* --- Header Section (MASTER SANTIAGO) --- */
 header {
     width: 100%;
     text-align: center;
@@ -43,13 +43,16 @@ header {
 
 .main-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 3.8rem;
-    color: #ffffff;
-    text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2, 0 0 40px #1215db; 
+    font-size: 3.5rem; /* ขนาดพอดีสำหรับชื่อ SANTIAGO */
+    color: #ffffff; /* ตัวอักษรสีขาว */
+    text-shadow: 
+        0 0 10px #8a2be2, 
+        0 0 20px #8a2be2, 
+        0 0 40px #1215db; 
     margin: 0;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 6px;
+    letter-spacing: 4px;
 }
 
 .watch-party-text {
@@ -65,10 +68,9 @@ header {
 
 /* --- Input & Button --- */
 .user-box {
-    margin-bottom: 30px;
+    margin-bottom: 35px;
     display: flex;
     justify-content: center;
-    gap: 0; /* ติดกันแบบเท่ๆ */
 }
 
 #username {
@@ -99,7 +101,7 @@ header {
     box-shadow: 0 0 15px #bf40bf;
 }
 
-/* --- BINGO Header --- */
+/* --- BINGO Header (B-I-N-G-O) --- */
 .bingo-header {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -125,3 +127,35 @@ header {
     max-width: 600px;
     background: rgba(0, 0, 0, 0.3);
     padding: 20px;
+    border-radius: 20px;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+/* --- Bingo Cells & Hover Effect --- */
+.cell {
+    aspect-ratio: 1/1;
+    background: #ffffff;
+    border-radius: 12px;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.85rem;
+    padding: 8px;
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* เอฟเฟกต์ยกตัวลอยตอนเอาเมาส์ชี้ */
+.cell:hover {
+    transform: translateY(-8px) scale(1.05);
+    z-index: 5;
+    box-shadow: 0 10px 20px rgba(138, 32, 240, 0.4);
+}
+
+.cell.marked:not(.special
