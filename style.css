@@ -175,3 +175,21 @@ header {
     .bingo-grid { gap: 6px; padding: 10px; }
     .cell { font-size: 0.6rem; border-radius: 6px; }
 }
+
+/* --- Footer Section --- */
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 20px;
+    z-index: 1;
+}
+
+footer p {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4); /* สีขาวจางๆ ให้ดูไม่แย่งซีนตาราง */
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
