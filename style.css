@@ -23,7 +23,7 @@ button { padding: 12px 35px; border: none; border-radius: 8px; background: #6366
 /* --- ส่วนหัวใหม่ตามบรีฟ --- */
 .main-title {
     font-size: 4rem; 
-    color: #00ffff; 
+    color: #5c21ff; 
     text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
     margin-bottom: 5px;
     font-weight: bold;
@@ -71,3 +71,4 @@ button { padding: 12px 35px; border: none; border-radius: 8px; background: #6366
     box-shadow: 0 0 15px #ff00ff;
     border-color: #ff00ff;
 }
+
