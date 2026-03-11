@@ -54,11 +54,20 @@ function renderBoard() {
 
 // 3. ฟังก์ชันส่งข้อมูลมาร์คไปยัง Server
 async function toggleMark(word) {
-    if (word === "JJAZ 👑") return; // ช่อง JJAZ มาร์คค้างไว้ตลอดอยู่แล้ว ไม่ต้องส่งข้อมูล
-    
+    if (word === "JJAZ") return;
+
+    // --- ส่วนที่เพิ่มใหม่: เปลี่ยนสีในเครื่องทันทีไม่ต้องรอ ---
+    if (markedByHost.includes(word)) {
+        markedByHost = markedByHost.filter(w => w !== word); // ลบออกถ้ามีอยู่แล้ว
+    } else {
+        markedByHost.push(word); // เพิ่มเข้าไปทันที
+    }
+    renderBoard(); // วาดตารางใหม่ทันที (สีจะขึ้นทันทีที่คลิก!)
+    // --------------------------------------------------
+
     try {
+        // แอบส่งไปที่ Google Apps Script เบื้องหลัง
         await fetch(`${API_URL}?action=setMark&word=${encodeURIComponent(word)}&key=${HOST_PASSWORD}`);
-        syncWithHost(); // อัปเดตหน้าจอตัวเองทันที
     } catch (e) {
         console.error("Error toggling mark:", e);
     }
@@ -88,4 +97,5 @@ setInterval(() => {
 
 // เรียกใช้ครั้งแรกเมื่อโหลดหน้าเว็บ (เผื่อมีบอร์ดเก่าค้างใน RAM)
 syncWithHost();
+
 
