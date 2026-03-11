@@ -13,8 +13,11 @@ const BINGO_WORDS = [
 
 // --- 1. ฟังก์ชันสุ่มบอร์ดใหม่ ---
 function generateNewBoard() {
-    const name = document.getElementById('username').value.trim();
-    const mapCode = document.getElementById('map-code-input').value.trim();
+    const nameInput = document.getElementById('username');
+    const mapInput = document.getElementById('map-code-input');
+    
+    const name = nameInput ? nameInput.value.trim() : "";
+    const mapCode = mapInput ? mapInput.value.trim() : "";
 
     if (!name || !mapCode) {
         alert("ใส่ชื่อและรหัสแมพจากสตรีมก่อนนะจ๊ะ!");
@@ -49,7 +52,8 @@ function renderBoard() {
         cell.innerText = word;
         
         cell.onclick = () => {
-            const currentUser = document.getElementById('username').value.trim();
+            const userEl = document.getElementById('username');
+            const currentUser = userEl ? userEl.value.trim() : "";
             if (currentUser === "JJAZ420") {
                 toggleMark(word);
             }
@@ -57,13 +61,12 @@ function renderBoard() {
         boardDiv.appendChild(cell);
     });
 
-    // *** เพิ่มส่วนเช็คบิงโกหลังจากวาดตารางเสร็จ ***
     if (myBoard.length > 0) {
         checkBingo();
     }
 }
 
-// --- 3. ฟังก์ชันเช็คบิงโก (หัวใจสำคัญ) ---
+// --- 3. ฟังก์ชันเช็คบิงโก ---
 function checkBingo() {
     const cells = document.querySelectorAll('.cell');
     if (cells.length === 0) return;
@@ -74,9 +77,9 @@ function checkBingo() {
     });
 
     const winPatterns = [
-        [0,1,2,3,4], [5,6,7,8,9], [10,11,12,13,14], [15,16,17,18,19], [20,21,22,23,24], // แนวนอน
-        [0,5,10,15,20], [1,6,11,16,21], [2,7,12,17,22], [3,8,13,18,23], [4,9,14,19,24], // แนวตั้ง
-        [0,6,12,18,24], [4,8,12,16,20] // ทแยง
+        [0,1,2,3,4], [5,6,7,8,9], [10,11,12,13,14], [15,16,17,18,19], [20,21,22,23,24],
+        [0,5,10,15,20], [1,6,11,16,21], [2,7,12,17,22], [3,8,13,18,23], [4,9,14,19,24],
+        [0,6,12,18,24], [4,8,12,16,20]
     ];
 
     const isWin = winPatterns.some(pattern => pattern.every(index => markedIndices.includes(index)));
@@ -93,14 +96,13 @@ function triggerWinEffect() {
     const mapCode = document.getElementById('display-map-code').innerText;
     const playerName = document.getElementById('display-name').innerText;
 
-    // ถ้าเปิดอยู่แล้วไม่ต้องรันซ้ำ
     if (overlay.style.display === 'flex') return;
 
     document.getElementById('win-details').innerText = `PLAYER: ${playerName} | MATCH: ${mapCode}`;
     overlay.style.display = 'flex';
 
     if (video) {
-        video.volume = 0.15; // กันหูทองระเบิด
+        video.volume = 0.15;
         video.currentTime = 0;
         video.play().catch(e => console.log("Autoplay blocked"));
     }
@@ -116,4 +118,39 @@ function triggerWinEffect() {
 function closeWin() {
     const overlay = document.getElementById('win-overlay');
     const video = document.getElementById('win-video');
-    overlay.style.display =
+    if(overlay) overlay.style.display = 'none';
+    if(video) video.pause();
+}
+
+// --- 5. ระบบสื่อสารกับ Server ---
+async function toggleMark(word) {
+    if (word === "JJAZ") return;
+    if (markedByHost.includes(word)) {
+        markedByHost = markedByHost.filter(w => w !== word);
+    } else {
+        markedByHost.push(word);
+    }
+    renderBoard();
+    try {
+        await fetch(`${API_URL}?action=setMark&word=${encodeURIComponent(word)}&key=${HOST_PASSWORD}`);
+    } catch (e) { console.error("Error:", e); }
+}
+
+async function syncWithHost() {
+    try {
+        const response = await fetch(`${API_URL}?action=getMarks`);
+        const data = await response.json();
+        markedByHost = data.marks || [];
+        renderBoard();
+    } catch (e) { console.log("Sync failed..."); }
+}
+
+setInterval(() => {
+    const userEl = document.getElementById('username');
+    const user = userEl ? userEl.value.trim() : "";
+    if (user && user !== "JJAZ420") {
+        setTimeout(syncWithHost, Math.random() * 3000);
+    }
+}, 20000);
+
+syncWithHost();
