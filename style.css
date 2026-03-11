@@ -123,38 +123,55 @@ header {
     transform: scale(1.02);
 }
 
-/* --- สไตล์พิเศษสำหรับช่อง JJAZ --- */
+/* --- สไตล์พิเศษสำหรับช่อง JJAZ (สีม่วงโดดเด่น) --- */
 .special-cell {
-    font-size: 1.2rem !important; /* ใหญ่กว่าคำอื่น */
-    color: #fff;
-    letter-spacing: 2px;
-    background: linear-gradient(45deg, #ff00ff, #00ffff) !important; /* ไล่สี ชมพู-ฟ้า */
-    border: 2px solid #fff !important;
-    animation: pulse-special 2s infinite; /* ใส่เอฟเฟกต์เต้นตุบๆ */
+    font-size: 1.1rem !important; 
+    font-weight: 700 !important;
+    color: #fff !important;
+    letter-spacing: 1px;
+    /* พื้นหลังสีม่วงไล่เฉดให้ดูมีมิติ */
+    background: linear-gradient(45deg, #8a2be2, #4b0082) !important; 
+    border: 2px solid #bf40bf !important; /* ขอบสีม่วงสว่าง */
+    animation: pulse-special 2s infinite; 
     z-index: 2;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
 /* เอฟเฟกต์การเต้นของช่อง JJAZ */
 @keyframes pulse-special {
-    0% { transform: scale(1); box-shadow: 0 0 10px #ff00ff; }
-    50% { transform: scale(1.05); box-shadow: 0 0 20px #00ffff; }
-    100% { transform: scale(1); box-shadow: 0 0 10px #ff00ff; }
+    0% { transform: scale(1); box-shadow: 0 0 15px #8a2be2; }
+    50% { transform: scale(1.08); box-shadow: 0 0 30px #bf40bf; }
+    100% { transform: scale(1); box-shadow: 0 0 15px #8a2be2; }
 }
 
-/* ปรับให้คำอื่นในช่องธรรมดาเล็กลงหน่อยเพื่อให้ JJAZ เด่นขึ้น */
-.cell {
-    font-size: 0.7rem;
-    /* ... ส่วนอื่นคงเดิม ... */
-}
-
-/* สถานะเมื่อถูกมาร์ค */
-.cell.marked {
-    background: #ff00ff; /* ชมพู Y2K */
-    border-color: #ff00ff;
-    box-shadow: 0 0 15px #ff00ff;
+/* สถานะเมื่อถูกมาร์ค (เปลี่ยนเป็นสีม่วงทั้งหมด) */
+.cell.marked:not(.special-cell) {
+    background: #8a2be2 !important; /* สีม่วงเข้มสะใจ */
+    border-color: #bf40bf !important; /* ขอบม่วงสว่าง */
+    box-shadow: 0 0 20px #8a2be2; /* เรืองแสงสีม่วง */
     color: white;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* แถม: ปรับปุ่ม GENERATE ให้เป็นโทนม่วงด้วยเพื่อให้เข้ากัน */
+.btn-y2k {
+    background: #8a2be2;
+    color: white;
+}
+
+.btn-y2k:hover {
+    background: #bf40bf;
+    box-shadow: 0 0 20px #bf40bf;
+}
+
+/* ปรับขอบช่องปกติให้ดูซอฟต์ลงในโทนม่วง */
+.cell {
+    border: 1px solid rgba(138, 43, 226, 0.3);
+}
+
+.cell:hover {
+    border-color: #8a2be2;
 }
 
 /* สำหรับมือถือ */
@@ -163,4 +180,5 @@ header {
     .bingo-grid { gap: 5px; }
     .cell { font-size: 0.5rem; }
 }
+
 
