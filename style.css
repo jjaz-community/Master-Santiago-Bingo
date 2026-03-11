@@ -1,186 +1,166 @@
 /* ดึงฟอนต์ Orbitron มาใช้ */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
+/* --- Global Setup --- */
 body {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Prompt', sans-serif; /* ฟอนต์หลักของเว็บให้อ่านง่าย */
     margin: 0;
     padding: 0;
-    background-color: #000;
     color: white;
-    overflow-x: hidden;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
     min-height: 100vh;
 }
 
-/* Background Video */
-/* เปลี่ยนจาก #bg-video เป็น #bg-image */
 #bg-image {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1; /* ให้อยู่หลังสุด */
-    object-fit: cover; /* ให้รูปคลุมเต็มจอพอดี */
-    filter: brightness(0.3); /* ปรับให้รูปมืดลงนิดนึงเพื่อให้ตัวหนังสือ MASTER SANTIAGO เด่นขึ้น */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    object-fit: cover;
+    filter: brightness(0.4);
 }
 
 .container {
     width: 100%;
     max-width: 800px;
-    padding: 40px 20px;
+    padding: 30px 20px;
     z-index: 1;
 }
 
-/* --- Header Section --- */
+/* --- Header Section (ใช้ฟอนต์ Orbitron ตามที่คุณขอ) --- */
 header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 15px;
 }
 
 .main-title {
-    font-size: 4.5rem; /* ขนาดใหญ่พิเศษ */
-    color: #5c21ff; /* สีน้ำเงิน Cyber */
-    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
+    font-family: 'Orbitron', sans-serif; /* ฟอนต์เดิมสุดเท่ */
+    font-size: 3.5rem; 
+    color: #5c21ff; /* สีม่วงน้ำเงิน */
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
     margin: 0;
     font-weight: 700;
-    letter-spacing: 6px;
     text-transform: uppercase;
+    letter-spacing: 4px;
 }
 
-.sub-title {
-    font-size: 1.2rem;
-    color: #ffffff; /* สีขาวเรืองแสง */
-    text-shadow: 0 0 5px #ffffff, 0 0 15px #ffffff;
-    margin-top: 10px;
-    font-weight: 400;
-    letter-spacing: 3px;
+.watch-party-text {
+    font-family: 'Orbitron', sans-serif; /* ฟอนต์เดิม */
+    font-size: 1.1rem;
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
     text-transform: uppercase;
-    opacity: 0.9;
+    margin-top: 5px;
+    margin-bottom: 25px;
+    letter-spacing: 5px;
 }
 
-/* --- Input & Button --- */
+/* --- Input & Button (ใช้ Prompt ให้อ่านง่าย) --- */
 .user-box {
-    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 #username {
-    font-family: 'Orbitron', sans-serif;
-    padding: 12px 15px;
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid #00ffff;
-    color: white;
+    font-family: 'Prompt', sans-serif;
+    padding: 10px 15px;
+    background: #ffffff;
+    border: none;
+    color: #333;
     outline: none;
+    text-align: center;
+    font-weight: 400;
+}
+
+.btn-generate {
+    font-family: 'Prompt', sans-serif;
+    padding: 10px 20px;
+    background: #5c21ff;
+    border: none;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-generate:hover {
+    background: #bf40bf;
+    box-shadow: 0 0 15px #bf40bf;
+}
+
+/* --- BINGO Header & Grid (ใช้ Prompt ให้อ่านง่ายตามรูป) --- */
+.bingo-header {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    max-width: 400px;
+    margin: 10px auto;
+}
+
+.bingo-header div {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
     text-align: center;
 }
 
-.btn-y2k {
-    font-family: 'Orbitron', sans-serif;
-    padding: 12px 25px;
-    background: #00ffff;
-    border: none;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    text-transform: uppercase;
-    margin-left: 5px;
+.special-letter {
+    color: #bf40bf !important;
+    text-shadow: 0 0 10px #bf40bf;
 }
 
-.btn-y2k:hover {
-    background: #ff00ff;
-    color: white;
-    box-shadow: 0 0 20px #ff00ff;
-}
-
-/* --- Bingo Grid 5x5 --- */
 .bingo-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 12px;
-    max-width: 550px;
+    max-width: 650px;
     margin: 0 auto;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 20px;
 }
 
 .cell {
     aspect-ratio: 1/1;
-    background: rgba(0, 0, 0, 0.75);
-    border: 1px solid rgba(0, 255, 255, 0.4);
+    background: #ffffff;
+    border-radius: 12px;
+    color: #1a1a1a;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     padding: 8px;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    font-weight: 700;
     line-height: 1.2;
 }
 
-.cell:hover {
-    border-color: #ff00ff;
-    transform: scale(1.02);
-}
-
-/* --- สไตล์พิเศษสำหรับช่อง JJAZ (สีม่วงโดดเด่น) --- */
+/* ช่อง JJAZ สีม่วง */
 .special-cell {
-    font-size: 1.1rem !important; 
-    font-weight: 700 !important;
+    background: #8a2be2 !important; 
     color: #fff !important;
-    letter-spacing: 1px;
-    /* พื้นหลังสีม่วงไล่เฉดให้ดูมีมิติ */
-    background: linear-gradient(45deg, #8a2be2, #4b0082) !important; 
-    border: 2px solid #bf40bf !important; /* ขอบสีม่วงสว่าง */
-    animation: pulse-special 2s infinite; 
-    z-index: 2;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: pulse-special 2s infinite;
 }
 
-/* เอฟเฟกต์การเต้นของช่อง JJAZ */
 @keyframes pulse-special {
-    0% { transform: scale(1); box-shadow: 0 0 15px #8a2be2; }
-    50% { transform: scale(1.08); box-shadow: 0 0 30px #bf40bf; }
-    100% { transform: scale(1); box-shadow: 0 0 15px #8a2be2; }
+    0% { transform: scale(1); box-shadow: 0 0 10px #8a2be2; }
+    50% { transform: scale(1.04); box-shadow: 0 0 20px #bf40bf; }
+    100% { transform: scale(1); box-shadow: 0 0 10px #8a2be2; }
 }
 
-/* สถานะเมื่อถูกมาร์ค (เปลี่ยนเป็นสีม่วงทั้งหมด) */
 .cell.marked:not(.special-cell) {
-    background: #8a2be2 !important; /* สีม่วงเข้มสะใจ */
-    border-color: #bf40bf !important; /* ขอบม่วงสว่าง */
-    box-shadow: 0 0 20px #8a2be2; /* เรืองแสงสีม่วง */
-    color: white;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    background: #bf40bf !important;
+    color: white !important;
 }
 
-/* แถม: ปรับปุ่ม GENERATE ให้เป็นโทนม่วงด้วยเพื่อให้เข้ากัน */
-.btn-y2k {
-    background: #8a2be2;
-    color: white;
-}
-
-.btn-y2k:hover {
-    background: #bf40bf;
-    box-shadow: 0 0 20px #bf40bf;
-}
-
-/* ปรับขอบช่องปกติให้ดูซอฟต์ลงในโทนม่วง */
-.cell {
-    border: 1px solid rgba(138, 43, 226, 0.3);
-}
-
-.cell:hover {
-    border-color: #8a2be2;
-}
-
-/* สำหรับมือถือ */
+/* Mobile Setup */
 @media (max-width: 600px) {
-    .main-title { font-size: 2.5rem; }
-    .bingo-grid { gap: 5px; }
-    .cell { font-size: 0.5rem; }
+    .main-title { font-size: 2.2rem; }
+    .watch-party-text { font-size: 0.7rem; letter-spacing: 2px; }
+    .bingo-grid { gap: 6px; padding: 10px; }
+    .cell { font-size: 0.6rem; border-radius: 6px; }
 }
+
 
 
 
