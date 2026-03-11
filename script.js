@@ -2,7 +2,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyP6x4HFkkg_Nu1A8TA2moD
 const HOST_PASSWORD = "1234"; 
 let myBoard = [];
 let markedByHost = [];
-let lastMapCode = ""; // เก็บเลขแมพล่าสุดเพื่อใช้เช็คการเปลี่ยนแมพ
+let lastMapCode = ""; 
 
 const BINGO_WORDS = [
   "ACE", "OP KILL", "KNIFE", "FLANK", "CLUTCH", "PLANT", "DEFUSE", 
@@ -12,7 +12,7 @@ const BINGO_WORDS = [
   "NICE TRY", "SAGE REZ", "ULT READY", "AFK", "SPY GLASS"
 ];
 
-// --- ฟังก์ชันสร้าง Seed เพื่อล็อคตาราง ---
+// --- 1. ฟังก์ชันสร้าง Seed และสุ่มตาราง ---
 function cyrb128(str) {
     let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
     for (let i = 0, k; i < str.length; i++) {
@@ -38,7 +38,7 @@ function sfc32(a, b, c, d) {
     }
 }
 
-// --- ฟังก์ชันหลักเมื่อกดปุ่ม Generate (ปรับเป็น Async เพื่อรองรับการ Clear) ---
+// --- 2. ฟังก์ชันหลัก (พร้อมระบบ Auto-Clear เมื่อเปลี่ยนเลขแมพ) ---
 async function generateNewBoard() {
     const name = document.getElementById('username').value.trim();
     const mapCode = document.getElementById('map-code-input').value.trim();
@@ -55,12 +55,12 @@ async function generateNewBoard() {
             return;
         }
 
-        // ✨ ระบบล้างมาร์คอัตโนมัติเมื่อเปลี่ยนเลขแมพ
+        // ✨ ถ้าเปลี่ยนแมพ สั่งล้างมาร์คใน Google Apps Script ทันที
         if (lastMapCode !== "" && lastMapCode !== mapCode) {
             try {
                 await fetch(`${API_URL}?action=clear&key=${HOST_PASSWORD}`);
                 markedByHost = []; 
-                console.log("New map detected: Marks cleared.");
+                console.log("New map: Marks cleared.");
             } catch (e) { console.error("Clear failed", e); }
         }
         lastMapCode = mapCode;
@@ -83,12 +83,12 @@ async function generateNewBoard() {
     
     myBoard = shuffled;
     
-    // ดึงข้อมูลมาร์คจากระบบก่อนวาดตาราง เพื่อให้มาร์คขึ้นทันที
-    await syncWithHost();
+    // ✨ ดึงข้อมูลมาร์คล่าสุดทันทีที่สร้างบอร์ด
+    await syncWithHost(); 
     renderBoard();
 }
 
-// --- ฟังก์ชันวาดตาราง ---
+// --- 3. ฟังก์ชันวาดตาราง ---
 function renderBoard() {
     const boardDiv = document.getElementById('bingo-board');
     if(!boardDiv) return;
@@ -114,6 +114,33 @@ function renderBoard() {
     if (myBoard.length > 0) checkBingo();
 }
 
+// --- 4. ฟังก์ชันส่งข้อมูลและดึงข้อมูล ---
+async function toggleMark(word) {
+    if (word === "JJAZ") return;
+    
+    // อัปเดตที่หน้าจอ JJAZ ทันที
+    if (markedByHost.includes(word)) {
+        markedByHost = markedByHost.filter(w => w !== word);
+    } else {
+        markedByHost.push(word);
+    }
+    renderBoard();
+
+    try {
+        await fetch(`${API_URL}?action=setMark&word=${encodeURIComponent(word)}&key=${HOST_PASSWORD}`);
+    } catch (e) { console.error("Error toggle:", e); }
+}
+
+async function syncWithHost() {
+    try {
+        const response = await fetch(`${API_URL}?action=getMarks`);
+        const data = await response.json();
+        markedByHost = data.marks || [];
+        renderBoard();
+    } catch (e) { console.log("Sync failed..."); }
+}
+
+// --- 5. ระบบเช็คบิงโกและเอฟเฟกต์ ---
 function checkBingo() {
     const cells = document.querySelectorAll('.cell');
     if (cells.length === 0) return;
@@ -152,41 +179,16 @@ function closeWin() {
     if (video) video.pause();
 }
 
-async function toggleMark(word) {
-    if (word === "JJAZ") return;
-    
-    // UI Update ทันทีเพื่อความลื่นไหล
-    if (markedByHost.includes(word)) {
-        markedByHost = markedByHost.filter(w => w !== word);
-    } else {
-        markedByHost.push(word);
-    }
-    renderBoard();
-
-    // ส่งข้อมูลไปหลังบ้าน
-    try {
-        await fetch(`${API_URL}?action=setMark&word=${encodeURIComponent(word)}&key=${HOST_PASSWORD}`);
-    } catch (e) { console.error("Error toggle:", e); }
-}
-
-async function syncWithHost() {
-    try {
-        const response = await fetch(`${API_URL}?action=getMarks`);
-        const data = await response.json();
-        markedByHost = data.marks || [];
-        renderBoard();
-    } catch (e) { console.log("Sync failed..."); }
-}
-
-// --- ระบบคนดู Sync ทุก 20 วินาที พร้อม Jitter ---
+// --- 6. ระบบ Sync อัตโนมัติสำหรับคนดู ---
 setInterval(() => {
     const userEl = document.getElementById('username');
     const currentUserName = userEl ? userEl.value.trim() : "";
 
+    // คนดูที่ไม่ใช่ JJAZ420 จะดึงข้อมูลทุก 20 วินาที
     if (currentUserName !== "" && currentUserName !== "JJAZ420") {
         setTimeout(syncWithHost, Math.random() * 5000); 
     }
 }, 20000);
 
-// เรียกใช้ครั้งแรกเมื่อโหลดหน้าเว็บ
+// เรียกครั้งแรกตอนเข้าเว็บ
 syncWithHost();
