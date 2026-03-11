@@ -110,11 +110,6 @@ header {
     text-align: center;
 }
 
-.special-letter {
-    color: #bf40bf !important;
-    text-shadow: 0 0 10px #bf40bf;
-}
-
 .bingo-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -167,6 +162,7 @@ header {
     .bingo-grid { gap: 6px; padding: 10px; }
     .cell { font-size: 0.6rem; border-radius: 6px; }
 }
+
 
 
 
