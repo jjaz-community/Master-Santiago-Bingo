@@ -167,12 +167,18 @@ async function syncWithHost() {
     } catch (e) { console.log("Sync failed..."); }
 }
 
+// วางไว้ล่างสุดของไฟล์ script.js
 setInterval(() => {
-    const user = document.getElementById('username').value.trim();
-    if (user && user !== "JJAZ420") {
-        setTimeout(syncWithHost, Math.random() * 3000);
-    }
-}, 20000);
+    const userEl = document.getElementById('username');
+    const currentUserName = userEl ? userEl.value.trim() : "";
 
+    // ถ้าไม่ใช่ JJAZ420 และมีการใส่ชื่อแล้ว ให้ดึงข้อมูลมาร์คจาก Host
+    if (currentUserName !== "" && currentUserName !== "JJAZ420") {
+        // สุ่มเวลาหน่วง 0-5 วินาที เพื่อไม่ให้คนดู 200 คนยิง Google พร้อมกันเป๊ะๆ
+        setTimeout(syncWithHost, Math.random() * 5000); 
+    }
+}, 20000); // ทำงานทุกๆ 20 วินาที
+
+// เรียกครั้งแรกทันทีที่โหลดหน้าเว็บ เพื่อเช็คเผื่อมีมาร์คค้างอยู่
 syncWithHost();
 
