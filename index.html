@@ -17,8 +17,14 @@
             
             <div class="user-box">
                 <input type="text" id="username" placeholder="TWITCH/YOUTUBE NAME">
+                <input type="text" id="map-code-input" placeholder="ใส่รหัสแมพ">
                 <button class="btn-generate" onclick="generateNewBoard()">Generate Bingo</button>
             </div>
+
+            <div id="board-info-display" class="map-label">
+    PLAYER: <span id="display-name">-</span> | 
+    MATCH: <span id="display-map-code">READY</span>
+</div>
             
             <div class="bingo-header">
                 <div>B</div>
@@ -42,6 +48,7 @@
 </html>
 </body>
 </html>
+
 
 
 
