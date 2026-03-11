@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxdG-VbpjhtO8Q1UPhl1Z0vN0YQNBWhL774f3iABODXnKqQ0-t5S1I7fKl1hcBiHfQzaw/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbyP6x4HFkkg_Nu1A8TA2moD_q3MWSKeN7SmhIchW96wPFisjKhBixVXfTKIAkc5nutZkw/exec"; 
 const HOST_PASSWORD = "1234"; // รหัสสำหรับเข้าชื่อ JJAZ420 และใช้ส่งข้อมูลไป Google Sheet
 let myBoard = [];
 let markedByHost = [];
@@ -175,3 +175,4 @@ setInterval(() => {
 }, 20000);
 
 syncWithHost();
+
