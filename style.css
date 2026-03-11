@@ -20,22 +20,54 @@ button { padding: 12px 35px; border: none; border-radius: 8px; background: #6366
 
 .watermark div { font-size: 12px; color: #ffffff; font-weight: 700; letter-spacing: 1px; border-top: 1px solid rgba(255, 255, 255, 0.3); padding-top: 3px; }
 
-/* --- ส่วนหัวใหม่ (MASTER SANTIAGO) --- */
+/* --- ส่วนหัวใหม่ตามบรีฟ --- */
 .main-title {
-    font-size: 5rem; /* ขนาดใหญ่ที่สุด (ปรับได้ตามความชอบนะครับ) */
-    color: #00ffff; /* สีน้ำเงินเรืองแสง (Cyber Blue) */
-    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; /* เอฟเฟกต์เรืองแสงน้ำเงิน */
-    margin-bottom: 5px; /* ห่างลงมาเล็กน้อยจากบรรทัดที่สอง (0.1rem ก็ได้ถ้าอยากให้ชิดกว่านี้) */
+    font-size: 4rem; 
+    color: #00ffff; 
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    margin-bottom: 5px;
     font-weight: bold;
-    text-transform: uppercase;
+    text-align: center;
 }
 
-/* --- บรรทัดที่สอง (WATCH PARTY WITH JJAZ) --- */
 .sub-title {
-    font-size: 1.5rem; /* ขนาดเล็กกว่า (ปรับได้ตามความชอบนะครับ) */
-    color: #ffffff; /* สีขาวเรืองแสง (White) */
-    text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff; /* เอฟเฟกต์เรืองแสงขาว */
-    margin-bottom: 20px; /* ห่างจากกล่องใส่ชื่อเล็กน้อย */
+    font-size: 1.2rem;
+    color: #ffffff;
+    text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff;
+    margin-bottom: 30px;
     font-weight: bold;
-    text-transform: uppercase;
+    text-align: center;
+}
+
+/* --- ตารางบิงโก 5x5 --- */
+.bingo-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* บังคับ 5 คอลัมน์ */
+    grid-template-rows: repeat(5, 1fr);    /* บังคับ 5 แถว */
+    gap: 8px;
+    max-width: 550px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.cell {
+    aspect-ratio: 1/1; /* ทำให้เป็นสี่เหลี่ยมจัตุรัส */
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #00ffff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    padding: 5px;
+}
+
+.cell.marked {
+    background: #ff00ff; /* สีชมพูเรืองแสง */
+    box-shadow: 0 0 15px #ff00ff;
+    border-color: #ff00ff;
 }
