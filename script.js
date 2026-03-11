@@ -3,7 +3,6 @@ const HOST_PASSWORD = "1234";
 let myBoard = [];
 let markedByHost = [];
 
-// ลิสต์คำศัพท์เดิมของคุณ
 const BINGO_WORDS = [
   "ACE", "OP KILL", "KNIFE", "FLANK", "CLUTCH", "PLANT", "DEFUSE", 
   "HEADSHOT", "TEAM ACE", "TRIPLE", "QUADRA", "NINJA", "UTILITY USE",
@@ -12,36 +11,30 @@ const BINGO_WORDS = [
   "NICE TRY", "SAGE REZ", "ULT READY", "AFK", "SPY GLASS"
 ];
 
-// --- 1. ฟังก์ชันสุ่มบอร์ดใหม่ (เวอร์ชันอัปเกรด: เช็ครหัสและล็อคชื่อ) ---
+// --- 1. ฟังก์ชันสุ่มบอร์ดใหม่ ---
 function generateNewBoard() {
     const name = document.getElementById('username').value.trim();
     const mapCode = document.getElementById('map-code-input').value.trim();
 
-    // เช็คว่ากรอกครบไหม
     if (!name || !mapCode) {
         alert("ใส่ชื่อและรหัสแมพจากสตรีมก่อนนะจ๊ะ!");
         return;
     }
 
-    // ล็อคข้อมูลแสดงผลบนหัวบอร์ด (สำหรับตอนคนดูแคปจอส่ง)
     const displayName = document.getElementById('display-name');
     const displayMap = document.getElementById('display-map-code');
     
     if(displayName) displayName.innerText = name;
     if(displayMap) displayMap.innerText = mapCode;
 
-    // --- ส่วนสุ่มตารางเดิมของคุณ ---
-    // สุ่มคำศัพท์มา 24 คำ
     let shuffled = [...BINGO_WORDS].sort(() => Math.random() - 0.5).slice(0, 24);
-    
-    // แทรกคำว่า JJAZ ไว้ตรงกลาง (ตำแหน่งที่ 13 หรือ Index ที่ 12)
     shuffled.splice(12, 0, "JJAZ"); 
     
     myBoard = shuffled;
     renderBoard();
 }
 
-// 2. ฟังก์ชันวาดตาราง (เหมือนเดิม)
+// --- 2. ฟังก์ชันวาดตาราง ---
 function renderBoard() {
     const boardDiv = document.getElementById('bingo-board');
     if(!boardDiv) return;
@@ -57,53 +50,70 @@ function renderBoard() {
         
         cell.onclick = () => {
             const currentUser = document.getElementById('username').value.trim();
-            // เฉพาะ JJAZ420 เท่านั้นที่กดมาร์คเพื่อเปลี่ยนสีให้ทุกคนได้
             if (currentUser === "JJAZ420") {
                 toggleMark(word);
             }
         };
         boardDiv.appendChild(cell);
     });
-}
 
-// 3. ฟังก์ชันส่งข้อมูลมาร์คไปยัง Server (เหมือนเดิม)
-async function toggleMark(word) {
-    if (word === "JJAZ") return;
-
-    if (markedByHost.includes(word)) {
-        markedByHost = markedByHost.filter(w => w !== word);
-    } else {
-        markedByHost.push(word);
-    }
-    renderBoard();
-
-    try {
-        await fetch(`${API_URL}?action=setMark&word=${encodeURIComponent(word)}&key=${HOST_PASSWORD}`);
-    } catch (e) {
-        console.error("Error toggling mark:", e);
+    // *** เพิ่มส่วนเช็คบิงโกหลังจากวาดตารางเสร็จ ***
+    if (myBoard.length > 0) {
+        checkBingo();
     }
 }
 
-// 4. ฟังก์ชันดึงข้อมูลจาก Server (เหมือนเดิม)
-async function syncWithHost() {
-    try {
-        const response = await fetch(`${API_URL}?action=getMarks`);
-        const data = await response.json();
-        markedByHost = data.marks || [];
-        renderBoard();
-    } catch (e) {
-        console.log("Sync failed, retrying...");
+// --- 3. ฟังก์ชันเช็คบิงโก (หัวใจสำคัญ) ---
+function checkBingo() {
+    const cells = document.querySelectorAll('.cell');
+    if (cells.length === 0) return;
+
+    let markedIndices = [];
+    cells.forEach((cell, index) => {
+        if (cell.classList.contains('marked')) markedIndices.push(index);
+    });
+
+    const winPatterns = [
+        [0,1,2,3,4], [5,6,7,8,9], [10,11,12,13,14], [15,16,17,18,19], [20,21,22,23,24], // แนวนอน
+        [0,5,10,15,20], [1,6,11,16,21], [2,7,12,17,22], [3,8,13,18,23], [4,9,14,19,24], // แนวตั้ง
+        [0,6,12,18,24], [4,8,12,16,20] // ทแยง
+    ];
+
+    const isWin = winPatterns.some(pattern => pattern.every(index => markedIndices.includes(index)));
+
+    if (isWin) {
+        triggerWinEffect();
     }
 }
 
-// 5. ระบบ Auto-Sync ทุก 20 วินาที (เฉพาะคนดู)
-setInterval(() => {
-    const user = document.getElementById('username').value.trim();
-    if (user && user !== "JJAZ420") {
-        const jitter = Math.random() * 3000; 
-        setTimeout(syncWithHost, jitter);
-    }
-}, 20000);
+// --- 4. ฟังก์ชันแสดงเอฟเฟกต์ชนะ ---
+function triggerWinEffect() {
+    const overlay = document.getElementById('win-overlay');
+    const video = document.getElementById('win-video');
+    const mapCode = document.getElementById('display-map-code').innerText;
+    const playerName = document.getElementById('display-name').innerText;
 
-// เรียกใช้ครั้งแรก
-syncWithHost();
+    // ถ้าเปิดอยู่แล้วไม่ต้องรันซ้ำ
+    if (overlay.style.display === 'flex') return;
+
+    document.getElementById('win-details').innerText = `PLAYER: ${playerName} | MATCH: ${mapCode}`;
+    overlay.style.display = 'flex';
+
+    if (video) {
+        video.volume = 0.15; // กันหูทองระเบิด
+        video.currentTime = 0;
+        video.play().catch(e => console.log("Autoplay blocked"));
+    }
+
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#8c0ced', '#ffffff', '#ffff00']
+    });
+}
+
+function closeWin() {
+    const overlay = document.getElementById('win-overlay');
+    const video = document.getElementById('win-video');
+    overlay.style.display =
