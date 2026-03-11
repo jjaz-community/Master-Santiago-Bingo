@@ -121,20 +121,32 @@ header {
     border-radius: 20px;
 }
 
+/* --- เอฟเฟกต์ Hover สำหรับช่องบิงโก --- */
 .cell {
-    aspect-ratio: 1/1;
-    background: #ffffff;
-    border-radius: 12px;
-    color: #1a1a1a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 0.85rem;
-    padding: 8px;
+    /* ... (โค้ดเดิมที่มีอยู่) ... */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* ปรับให้เคลื่อนไหวนุ่มนวล */
+    position: relative;
+}
+
+/* เมื่อเอาเมาส์ไปชี้ (Hover) */
+.cell:hover {
+    transform: translateY(-8px) scale(1.05); /* ยกตัวลอยขึ้น 8px และขยายใหญ่ขึ้นเล็กน้อย */
+    z-index: 5; /* ให้ช่องที่ชี้ลอยทับช่องอื่น */
+    box-shadow: 0 10px 20px rgba(138, 32, 240, 0.4); /* ใส่เงาสีม่วงฟุ้งๆ */
+    border-color: #8a2be2; /* เปลี่ยนขอบเป็นสีม่วงตอนชี้ */
     cursor: pointer;
-    font-weight: 700;
-    line-height: 1.2;
+}
+
+/* สำหรับช่องที่ถูกมาร์คแล้ว (ให้ Hover แล้วดูสว่างขึ้น) */
+.cell.marked:hover {
+    filter: brightness(1.2); /* เพิ่มความสว่าง */
+    box-shadow: 0 0 25px #bf40bf; /* เรืองแสงม่วงสว่างขึ้น */
+}
+
+/* ส่วนช่อง JJAZ ตรงกลาง (ให้ Hover แล้วเต้นแรงขึ้น) */
+.special-cell:hover {
+    transform: translateY(-10px) scale(1.1) !important;
+    box-shadow: 0 15px 30px #bf40bf, 0 0 50px #8a2be2 !important;
 }
 
 /* ช่อง JJAZ สีม่วง */
@@ -180,6 +192,7 @@ header {
     .bingo-grid { gap: 6px; padding: 10px; }
     .cell { font-size: 0.6rem; border-radius: 6px; }
 }
+
 
 
 
