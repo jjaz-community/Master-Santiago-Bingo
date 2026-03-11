@@ -123,6 +123,30 @@ header {
     transform: scale(1.02);
 }
 
+/* --- สไตล์พิเศษสำหรับช่อง JJAZ --- */
+.special-cell {
+    font-size: 1.2rem !important; /* ใหญ่กว่าคำอื่น */
+    color: #fff;
+    letter-spacing: 2px;
+    background: linear-gradient(45deg, #ff00ff, #00ffff) !important; /* ไล่สี ชมพู-ฟ้า */
+    border: 2px solid #fff !important;
+    animation: pulse-special 2s infinite; /* ใส่เอฟเฟกต์เต้นตุบๆ */
+    z-index: 2;
+}
+
+/* เอฟเฟกต์การเต้นของช่อง JJAZ */
+@keyframes pulse-special {
+    0% { transform: scale(1); box-shadow: 0 0 10px #ff00ff; }
+    50% { transform: scale(1.05); box-shadow: 0 0 20px #00ffff; }
+    100% { transform: scale(1); box-shadow: 0 0 10px #ff00ff; }
+}
+
+/* ปรับให้คำอื่นในช่องธรรมดาเล็กลงหน่อยเพื่อให้ JJAZ เด่นขึ้น */
+.cell {
+    font-size: 0.7rem;
+    /* ... ส่วนอื่นคงเดิม ... */
+}
+
 /* สถานะเมื่อถูกมาร์ค */
 .cell.marked {
     background: #ff00ff; /* ชมพู Y2K */
@@ -139,3 +163,4 @@ header {
     .bingo-grid { gap: 5px; }
     .cell { font-size: 0.5rem; }
 }
+
