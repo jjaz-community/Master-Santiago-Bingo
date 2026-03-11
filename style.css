@@ -213,6 +213,57 @@ header {
     position: relative;
 }
 
+.win-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+}
+
+.win-content {
+    background: linear-gradient(145deg, #8c0ced, #4b0082);
+    padding: 50px;
+    border-radius: 30px;
+    border: 5px solid #ffffff;
+    text-align: center;
+    box-shadow: 0 0 50px #8c0ced;
+    animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.win-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 5rem;
+    color: #fff;
+    text-shadow: 0 0 20px #fff, 0 0 40px #8c0ced;
+    margin: 0;
+}
+
+#win-details {
+    font-family: 'Prompt', sans-serif;
+    font-size: 1.5rem;
+    color: #ffff00;
+    margin-top: 10px;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.btn-close {
+    margin-top: 20px;
+    padding: 10px 30px;
+    background: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
 /* เอฟเฟกต์เรืองแสง (Glow) ใช้สีม่วง #8c0ced เป็นหลัก */
 @keyframes jjaz-glow {
     from { 
@@ -224,6 +275,29 @@ header {
         box-shadow: 0 0 25px #8c0ced, 0 0 45px #b366ff, inset 0 0 15px rgba(255,255,255,0.6); 
     }
 }
+
+/* --- Video Bingo Styling --- */
+#win-video {
+    width: 100%;
+    max-width: 480px; /* ขนาดกำลังดี ไม่บังจอ */
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 30px rgba(140, 12, 237, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ปรับขนาดตัวหนังสือตอนชนะให้เล็กลงนิดนึงเพื่อให้สมดุลกับวิดีโอ */
+.win-title {
+    font-size: 3.5rem !important; 
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+    .win-title { font-size: 2.2rem !important; }
+    .win-content { padding: 30px 20px; width: 85%; }
+}
+
 /* --- Footer --- */
 footer {
     width: 100%;
@@ -249,6 +323,7 @@ footer p {
     .bingo-grid { gap: 8px; padding: 10px; }
     .cell { font-size: 0.55rem; border-radius: 6px; }
 }
+
 
 
 
