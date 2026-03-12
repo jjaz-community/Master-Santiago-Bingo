@@ -4,7 +4,6 @@ let myBoard = [];
 let markedByHost = [];
 let lastMapCode = ""; 
 
-// รายการคำบิงโก (จะถูกดึงทีมชนะแยกออกไปสุ่มตำแหน่งพิเศษ)
 const BINGO_WORDS = [
   "NS WIN", "NRG WIN", "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
   "FLAWLESS", "TEAM ACE", "THROUGH SMOKE", "EWW WHIFFED", "TECH PAUSE", "MOLLY KILLED",
@@ -38,7 +37,7 @@ function sfc32(a, b, c, d) {
     }
 }
 
-// --- 2. ฟังก์ชันหลัก (สุ่มใหม่ตามแมพ + ล็อคตำแหน่งทีมชนะไม่ให้ชนระนาบกัน) ---
+// --- 2. ฟังก์ชันหลัก ---
 async function generateNewBoard() {
     const name = document.getElementById('username').value.trim();
     const mapCode = document.getElementById('map-code-input').value.trim();
@@ -76,7 +75,6 @@ async function generateNewBoard() {
     const centerIndex = 12;
 
     let otherWords = BINGO_WORDS.filter(w => w !== teamA && w !== teamB);
-    
     for (let i = otherWords.length - 1; i > 0; i--) {
         const j = Math.floor(rand() * (i + 1));
         [otherWords[i], otherWords[j]] = [otherWords[j], otherWords[i]];
@@ -87,15 +85,11 @@ async function generateNewBoard() {
         posA = Math.floor(rand() * 25);
         if (posA !== centerIndex) break;
     }
-
     while (true) {
         posB = Math.floor(rand() * 25);
         let rowA = Math.floor(posA / 5), colA = posA % 5;
         let rowB = Math.floor(posB / 5), colB = posB % 5;
-
-        if (posB !== centerIndex && posB !== posA && rowA !== rowB && colA !== colB) {
-            break;
-        }
+        if (posB !== centerIndex && posB !== posA && rowA !== rowB && colA !== colB) break;
     }
 
     let shuffled = new Array(25);
@@ -165,7 +159,7 @@ async function syncWithHost() {
     } catch (e) { console.log("Sync failed..."); }
 }
 
-// --- 5. ระบบเช็คบิงโกและเอฟเฟกต์ (Loop คลิป + ลดเสียง) ---
+// --- 5. ระบบเช็คบิงโกและเอฟเฟกต์ ---
 function checkBingo() {
     const cells = document.querySelectorAll('.cell');
     if (cells.length === 0) return;
@@ -193,17 +187,23 @@ function triggerWinEffect() {
     if (!mapDisplay) {
         mapDisplay = document.createElement('div');
         mapDisplay.id = 'win-map-display';
-        mapDisplay.style.cssText = "position: absolute; bottom: 15%; color: #fff; font-size: 28px; font-weight: bold; text-shadow: 0 0 10px #8c0ced; background: rgba(0,0,0,0.7); padding: 15px 30px; border: 2px solid #8c0ced; border-radius: 50px; z-index: 1001; letter-spacing: 2px;";
+        mapDisplay.style.cssText = "position: absolute; bottom: 15%; color: #fff; font-size: 28px; font-weight: bold; text-shadow: 0 0 10px #8c0ced; background: rgba(0,0,0,0.7); padding: 15px 30px; border: 2px solid #8c0ced; border-radius: 50px; z-index: 1005; letter-spacing: 2px;";
         overlay.appendChild(mapDisplay);
     }
     mapDisplay.innerText = "VERIFIED MAP: " + mapCode;
 
     overlay.style.display = 'flex';
     if (video) {
-        video.loop = true;      // ✨ ตั้งให้วิดีโอเล่นซ้ำ
-        video.volume = 0.1;     // ✨ ลดระดับเสียงเหลือ 10%
+        video.style.zIndex = "1000"; // ให้วิดีโออยู่ด้านหลังข้อความนิดนึง
+        video.setAttribute('playsinline', ''); // สำหรับเล่นบนมือถือ
+        video.loop = true;
+        video.volume = 0.1; // 10% ตามที่ต้องการ
         video.currentTime = 0;
-        video.play().catch(e => console.log("Autoplay blocked"));
+        video.play().catch(e => {
+            console.log("Autoplay blocked, attempting unmuted play...");
+            video.muted = true; // ถ้าบล็อค ให้ลองเล่นแบบไม่มีเสียงก่อน (แต่ในสตรีมควรทำงานได้ปกติ)
+            video.play();
+        });
     }
     if (typeof confetti === 'function') {
         confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#8c0ced', '#ffffff', '#ffff00'] });
@@ -220,7 +220,7 @@ function closeWin() {
     }
 }
 
-// --- 6. ระบบ Sync อัตโนมัติสำหรับคนดู ---
+// --- 6. ระบบ Sync ---
 setInterval(() => {
     const userEl = document.getElementById('username');
     const currentUserName = userEl ? userEl.value.trim() : "";
@@ -230,4 +230,3 @@ setInterval(() => {
 }, 20000);
 
 syncWithHost();
-
