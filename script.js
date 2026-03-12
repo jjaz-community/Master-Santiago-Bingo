@@ -6,7 +6,7 @@ let lastMapCode = "";
 
 const BINGO_WORDS = [
   "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
-  "FLAWLESS", "TEAM ACE", "THROUGH SMOKE", "EWW WHIFFED", "TECH PAUSE", "UTILITY KILLED",
+  "FLAWLESS", "TEAM ACE", "THROUGH SMOKE", "EWW WHIFFED", "TECH PAUSE", "MOLLY KILLED",
   "RIOT BUDDY", "DEFUSE < 1 SEC", "INSANE SHOT", "6-7 DETECT", "เสี่ยโด 500", "30 KILLS",
   "BUFF", "OVERTIME", "USELESS TIMEOUT", "JUMP SHOT", "WALLBANG" 
 ];
@@ -191,4 +191,5 @@ setInterval(() => {
 
 // เรียกครั้งแรกตอนเข้าเว็บ
 syncWithHost();
+
 
