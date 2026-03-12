@@ -5,11 +5,10 @@ let markedByHost = [];
 let lastMapCode = ""; 
 
 const BINGO_WORDS = [
-  "ACE", "OP KILL", "KNIFE", "FLANK", "CLUTCH", "PLANT", "DEFUSE", 
-  "HEADSHOT", "TEAM ACE", "TRIPLE", "QUADRA", "NINJA", "UTILITY USE",
-  "STUNNED", "BLINDED", "THRIFTY", "ECO WIN", "RETAKE", "BOMB EXPLODE",
-  "PERFECT", "OVERTIME", "SAVE", "JUMP SHOT", "WALLBANG", "FIRST BLOOD",
-  "NICE TRY", "SAGE REZ", "ULT READY", "AFK", "SPY GLASS"
+  "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
+  "FLAWLESS", "TEAM ACE", "THROUGH SMOKE", "EWW WHIFFED", "TECH PAUSE", "UTILITY KILLED",
+  "RIOT BUDDY", "DEFUSE < 1 SEC", "INSANE SHOT", "6-7 DETECT", "เสี่ยโด 500", "30 KILLS",
+  "BUFF", "OVERTIME", "USELESS TIMEOUT", "JUMP SHOT", "WALLBANG" 
 ];
 
 // --- 1. ฟังก์ชันสร้าง Seed และสุ่มตาราง ---
@@ -192,3 +191,4 @@ setInterval(() => {
 
 // เรียกครั้งแรกตอนเข้าเว็บ
 syncWithHost();
+
