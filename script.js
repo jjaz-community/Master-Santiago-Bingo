@@ -4,7 +4,7 @@ let myBoard = [];
 let markedByHost = [];
 let lastMapCode = ""; 
 
-// หมายเหตุ: ผมใส่ "NS WIN" และ "NRG WIN" ไว้ในลิสต์นี้ให้แล้วเพื่อให้ครบ 24 คำ + ช่องกลาง JJAZ
+// รายการคำบิงโก (จะถูกดึงทีมชนะแยกออกไปสุ่มตำแหน่งพิเศษ)
 const BINGO_WORDS = [
   "NS WIN", "NRG WIN", "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
   "FLAWLESS", "TEAM ACE", "THROUGH SMOKE", "EWW WHIFFED", "TECH PAUSE", "MOLLY KILLED",
@@ -38,7 +38,7 @@ function sfc32(a, b, c, d) {
     }
 }
 
-// --- 2. ฟังก์ชันหลัก (สุ่มใหม่ตามแมพ + ล็อคตำแหน่งทีมชนะไม่ให้ชนกัน) ---
+// --- 2. ฟังก์ชันหลัก (สุ่มใหม่ตามแมพ + ล็อคตำแหน่งทีมชนะไม่ให้ชนระนาบกัน) ---
 async function generateNewBoard() {
     const name = document.getElementById('username').value.trim();
     const mapCode = document.getElementById('map-code-input').value.trim();
@@ -84,7 +84,7 @@ async function generateNewBoard() {
         [otherWords[i], otherWords[j]] = [otherWords[j], otherWords[i]];
     }
 
-    // สุ่มตำแหน่ง NS WIN และ NRG WIN
+    // สุ่มตำแหน่ง NS WIN และ NRG WIN (ล็อคไม่ให้ทับแถว/คอลัมน์เดียวกัน)
     let posA, posB;
     while (true) {
         posA = Math.floor(rand() * 25);
@@ -111,7 +111,7 @@ async function generateNewBoard() {
     let otherIdx = 0;
     for (let i = 0; i < 25; i++) {
         if (shuffled[i] === undefined) {
-            shuffled[i] = otherWords[otherIdx] || "WALLBANG"; // ค่าสำรองถ้าคำไม่พอ
+            shuffled[i] = otherWords[otherIdx] || "WALLBANG"; 
             otherIdx++;
         }
     }
@@ -170,7 +170,7 @@ async function syncWithHost() {
     } catch (e) { console.log("Sync failed..."); }
 }
 
-// --- 5. ระบบเช็คบิงโกและเอฟเฟกต์ ---
+// --- 5. ระบบเช็คบิงโกและเอฟเฟกต์ (เพิ่มการแสดงเลขแมพ) ---
 function checkBingo() {
     const cells = document.querySelectorAll('.cell');
     if (cells.length === 0) return;
@@ -190,7 +190,21 @@ function checkBingo() {
 function triggerWinEffect() {
     const overlay = document.getElementById('win-overlay');
     const video = document.getElementById('win-video');
+    const mapCode = document.getElementById('map-code-input').value.trim();
+
     if (!overlay || overlay.style.display === 'flex') return;
+
+    // สร้าง/อัปเดตตัวหนังสือแสดง Map Code ในหน้า BINGO
+    let mapDisplay = document.getElementById('win-map-display');
+    if (!mapDisplay) {
+        mapDisplay = document.createElement('div');
+        mapDisplay.id = 'win-map-display';
+        // ปรับแต่ง CSS ของตัวหนังสือเลขแมพใน Overlay
+        mapDisplay.style.cssText = "position: absolute; bottom: 15%; color: #fff; font-size: 28px; font-weight: bold; text-shadow: 0 0 10px #8c0ced; background: rgba(0,0,0,0.7); padding: 15px 30px; border: 2px solid #8c0ced; border-radius: 50px; z-index: 1001; letter-spacing: 2px;";
+        overlay.appendChild(mapDisplay);
+    }
+    mapDisplay.innerText = "VERIFIED MAP: " + mapCode;
+
     overlay.style.display = 'flex';
     if (video) {
         video.volume = 0.25;
