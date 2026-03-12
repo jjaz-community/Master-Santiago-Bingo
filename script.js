@@ -75,16 +75,13 @@ async function generateNewBoard() {
     const teamB = "NRG WIN";
     const centerIndex = 12;
 
-    // กรองคำอื่นๆ ออกมา
     let otherWords = BINGO_WORDS.filter(w => w !== teamA && w !== teamB);
     
-    // สุ่มคำที่เหลือด้วย Seed
     for (let i = otherWords.length - 1; i > 0; i--) {
         const j = Math.floor(rand() * (i + 1));
         [otherWords[i], otherWords[j]] = [otherWords[j], otherWords[i]];
     }
 
-    // สุ่มตำแหน่ง NS WIN และ NRG WIN (ล็อคไม่ให้ทับแถว/คอลัมน์เดียวกัน)
     let posA, posB;
     while (true) {
         posA = Math.floor(rand() * 25);
@@ -96,13 +93,11 @@ async function generateNewBoard() {
         let rowA = Math.floor(posA / 5), colA = posA % 5;
         let rowB = Math.floor(posB / 5), colB = posB % 5;
 
-        // กฎ: ห้ามทับช่องกลาง, ห้ามซ้ำ A, ห้ามแถวเดียวกัน, ห้ามคอลัมน์เดียวกัน
         if (posB !== centerIndex && posB !== posA && rowA !== rowB && colA !== colB) {
             break;
         }
     }
 
-    // สร้างตาราง
     let shuffled = new Array(25);
     shuffled[centerIndex] = "JJAZ";
     shuffled[posA] = teamA;
@@ -170,7 +165,7 @@ async function syncWithHost() {
     } catch (e) { console.log("Sync failed..."); }
 }
 
-// --- 5. ระบบเช็คบิงโกและเอฟเฟกต์ (เพิ่มการแสดงเลขแมพ) ---
+// --- 5. ระบบเช็คบิงโกและเอฟเฟกต์ (Loop คลิป + ลดเสียง) ---
 function checkBingo() {
     const cells = document.querySelectorAll('.cell');
     if (cells.length === 0) return;
@@ -194,12 +189,10 @@ function triggerWinEffect() {
 
     if (!overlay || overlay.style.display === 'flex') return;
 
-    // สร้าง/อัปเดตตัวหนังสือแสดง Map Code ในหน้า BINGO
     let mapDisplay = document.getElementById('win-map-display');
     if (!mapDisplay) {
         mapDisplay = document.createElement('div');
         mapDisplay.id = 'win-map-display';
-        // ปรับแต่ง CSS ของตัวหนังสือเลขแมพใน Overlay
         mapDisplay.style.cssText = "position: absolute; bottom: 15%; color: #fff; font-size: 28px; font-weight: bold; text-shadow: 0 0 10px #8c0ced; background: rgba(0,0,0,0.7); padding: 15px 30px; border: 2px solid #8c0ced; border-radius: 50px; z-index: 1001; letter-spacing: 2px;";
         overlay.appendChild(mapDisplay);
     }
@@ -207,7 +200,8 @@ function triggerWinEffect() {
 
     overlay.style.display = 'flex';
     if (video) {
-        video.volume = 0.25;
+        video.loop = true;      // ✨ ตั้งให้วิดีโอเล่นซ้ำ
+        video.volume = 0.1;     // ✨ ลดระดับเสียงเหลือ 10%
         video.currentTime = 0;
         video.play().catch(e => console.log("Autoplay blocked"));
     }
@@ -220,7 +214,10 @@ function closeWin() {
     const overlay = document.getElementById('win-overlay');
     const video = document.getElementById('win-video');
     if (overlay) overlay.style.display = 'none';
-    if (video) video.pause();
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+    }
 }
 
 // --- 6. ระบบ Sync อัตโนมัติสำหรับคนดู ---
