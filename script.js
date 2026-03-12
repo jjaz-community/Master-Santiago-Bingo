@@ -4,11 +4,12 @@ let myBoard = [];
 let markedByHost = [];
 let lastMapCode = ""; 
 
+// หมายเหตุ: ผมใส่ "NS WIN" และ "NRG WIN" ไว้ในลิสต์นี้ให้แล้วเพื่อให้ครบ 24 คำ + ช่องกลาง JJAZ
 const BINGO_WORDS = [
-  "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
+  "NS WIN", "NRG WIN", "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
   "FLAWLESS", "TEAM ACE", "THROUGH SMOKE", "EWW WHIFFED", "TECH PAUSE", "MOLLY KILLED",
   "RIOT BUDDY", "DEFUSE < 1 SEC", "INSANE SHOT", "6-7 DETECT", "เสี่ยโด 500", "30 KILLS",
-  "BUFF", "OVERTIME", "USELESS TIMEOUT", "JUMP SHOT", "WALLBANG" 
+  "BUFF", "OVERTIME", "USELESS TIMEOUT"
 ];
 
 // --- 1. ฟังก์ชันสร้าง Seed และสุ่มตาราง ---
@@ -37,7 +38,7 @@ function sfc32(a, b, c, d) {
     }
 }
 
-// --- 2. ฟังก์ชันหลัก (พร้อมระบบ Auto-Clear เมื่อเปลี่ยนเลขแมพ) ---
+// --- 2. ฟังก์ชันหลัก (สุ่มใหม่ตามแมพ + ล็อคตำแหน่งทีมชนะไม่ให้ชนกัน) ---
 async function generateNewBoard() {
     const name = document.getElementById('username').value.trim();
     const mapCode = document.getElementById('map-code-input').value.trim();
@@ -54,7 +55,6 @@ async function generateNewBoard() {
             return;
         }
 
-        // ✨ ถ้าเปลี่ยนแมพ สั่งล้างมาร์คใน Google Apps Script ทันที
         if (lastMapCode !== "" && lastMapCode !== mapCode) {
             try {
                 await fetch(`${API_URL}?action=clear&key=${HOST_PASSWORD}`);
@@ -71,18 +71,52 @@ async function generateNewBoard() {
     const seed = cyrb128(name.toLowerCase() + mapCode.toLowerCase());
     const rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
 
-    let tempWords = [...BINGO_WORDS];
-    for (let i = tempWords.length - 1; i > 0; i--) {
+    const teamA = "NS WIN";
+    const teamB = "NRG WIN";
+    const centerIndex = 12;
+
+    // กรองคำอื่นๆ ออกมา
+    let otherWords = BINGO_WORDS.filter(w => w !== teamA && w !== teamB);
+    
+    // สุ่มคำที่เหลือด้วย Seed
+    for (let i = otherWords.length - 1; i > 0; i--) {
         const j = Math.floor(rand() * (i + 1));
-        [tempWords[i], tempWords[j]] = [tempWords[j], tempWords[i]];
+        [otherWords[i], otherWords[j]] = [otherWords[j], otherWords[i]];
     }
 
-    let shuffled = tempWords.slice(0, 24);
-    shuffled.splice(12, 0, "JJAZ"); 
-    
+    // สุ่มตำแหน่ง NS WIN และ NRG WIN
+    let posA, posB;
+    while (true) {
+        posA = Math.floor(rand() * 25);
+        if (posA !== centerIndex) break;
+    }
+
+    while (true) {
+        posB = Math.floor(rand() * 25);
+        let rowA = Math.floor(posA / 5), colA = posA % 5;
+        let rowB = Math.floor(posB / 5), colB = posB % 5;
+
+        // กฎ: ห้ามทับช่องกลาง, ห้ามซ้ำ A, ห้ามแถวเดียวกัน, ห้ามคอลัมน์เดียวกัน
+        if (posB !== centerIndex && posB !== posA && rowA !== rowB && colA !== colB) {
+            break;
+        }
+    }
+
+    // สร้างตาราง
+    let shuffled = new Array(25);
+    shuffled[centerIndex] = "JJAZ";
+    shuffled[posA] = teamA;
+    shuffled[posB] = teamB;
+
+    let otherIdx = 0;
+    for (let i = 0; i < 25; i++) {
+        if (shuffled[i] === undefined) {
+            shuffled[i] = otherWords[otherIdx] || "WALLBANG"; // ค่าสำรองถ้าคำไม่พอ
+            otherIdx++;
+        }
+    }
+
     myBoard = shuffled;
-    
-    // ✨ ดึงข้อมูลมาร์คล่าสุดทันทีที่สร้างบอร์ด
     await syncWithHost(); 
     renderBoard();
 }
@@ -116,15 +150,12 @@ function renderBoard() {
 // --- 4. ฟังก์ชันส่งข้อมูลและดึงข้อมูล ---
 async function toggleMark(word) {
     if (word === "JJAZ") return;
-    
-    // อัปเดตที่หน้าจอ JJAZ ทันที
     if (markedByHost.includes(word)) {
         markedByHost = markedByHost.filter(w => w !== word);
     } else {
         markedByHost.push(word);
     }
     renderBoard();
-
     try {
         await fetch(`${API_URL}?action=setMark&word=${encodeURIComponent(word)}&key=${HOST_PASSWORD}`);
     } catch (e) { console.error("Error toggle:", e); }
@@ -182,14 +213,9 @@ function closeWin() {
 setInterval(() => {
     const userEl = document.getElementById('username');
     const currentUserName = userEl ? userEl.value.trim() : "";
-
-    // คนดูที่ไม่ใช่ JJAZ420 จะดึงข้อมูลทุก 20 วินาที
     if (currentUserName !== "" && currentUserName !== "JJAZ420") {
         setTimeout(syncWithHost, Math.random() * 5000); 
     }
 }, 20000);
 
-// เรียกครั้งแรกตอนเข้าเว็บ
 syncWithHost();
-
-
