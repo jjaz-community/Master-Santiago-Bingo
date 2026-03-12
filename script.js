@@ -8,7 +8,7 @@ let lastMapCode = "";
 const BINGO_WORDS = [
   "NS WIN", "NRG WIN", "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
   "FLAWLESS", "TEAM ACE", "THROUGH SMOKE", "EWW WHIFFED", "TECH PAUSE", "MOLLY KILLED",
-  "RIOT BUDDY", "DEFUSE < 1 SEC", "INSANE SHOT", "6-7 DETECT", "เสี่ยโด 500", "30 KILLS",
+  "RIOT BUDDY", "DEFUSE < 1 SEC", "INSANE SHOT", "6-7 DETECT", "เสี่ยโดเนท 500", "30 KILLS",
   "BUFF", "OVERTIME", "USELESS TIMEOUT"
 ];
 
@@ -44,7 +44,7 @@ async function generateNewBoard() {
     const mapCode = document.getElementById('map-code-input').value.trim();
 
     if (!name || !mapCode) {
-        alert("ใส่ชื่อและรหัสแมพก่อนนะจ๊ะ!");
+        alert("ใส่ชื่อและรหัสแมพก่อนน้าา!");
         return;
     }
 
@@ -230,3 +230,4 @@ setInterval(() => {
 }, 20000);
 
 syncWithHost();
+
