@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzo65L1VnSypmVd-dlX1dEFssqWVbRtRmHcrZks1qXWQbwM1SgX-3Z8Flf3mM5kP1fHnQ/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbxaMiwqMo8EqfiNg19xo7eHdQkHdMmxsqt87S12eu_lbDlrb9v-mX7XGFcM07pEr10Zcg/exec"; 
 const HOST_PASSWORD = "1234"; 
 let myBoard = [];
 let markedByHost = [];
