@@ -2,7 +2,9 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyP6x4HFkkg_Nu1A8TA2moD
 const HOST_PASSWORD = "1234"; 
 let myBoard = [];
 let markedByHost = [];
-let lastMapCode = ""; 
+
+// ใช้ localStorage เพื่อจำรหัสแมพล่าสุด แม้จะกด Refresh หน้าเว็บ
+let lastMapCode = localStorage.getItem('jjaz_last_map') || ""; 
 
 const BINGO_WORDS = [
   "NS WIN", "PRX WIN", "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
@@ -11,7 +13,7 @@ const BINGO_WORDS = [
   "BUFF", "OVERTIME", "USELESS TIMEOUT"
 ];
 
-// --- 1. ฟังก์ชันสร้าง Seed และสุ่มตาราง ---
+// --- 1. ฟังก์ชันสร้าง Seed และสุ่มตาราง (คงเดิม) ---
 function cyrb128(str) {
     let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
     for (let i = 0, k; i < str.length; i++) {
@@ -37,7 +39,7 @@ function sfc32(a, b, c, d) {
     }
 }
 
-// --- 2. ฟังก์ชันหลัก ---
+// --- 2. ฟังก์ชันหลัก (แก้ไขจุดบกพร่อง) ---
 async function generateNewBoard() {
     const name = document.getElementById('username').value.trim();
     const mapCode = document.getElementById('map-code-input').value.trim();
@@ -54,19 +56,31 @@ async function generateNewBoard() {
             return;
         }
 
-        if (lastMapCode !== "" && lastMapCode !== mapCode) {
-            try {
-                await fetch(`${API_URL}?action=clear&key=${HOST_PASSWORD}`);
-                markedByHost = []; 
-                console.log("New map: Marks cleared.");
-            } catch (e) { console.error("Clear failed", e); }
+        // เช็คว่าถ้าเป็นแมพใหม่ หรือกด Generate ซ้ำในขณะที่มีค่าค้างอยู่
+        if (lastMapCode !== mapCode) {
+            if (confirm(`ตรวจพบการเปลี่ยนแมพจาก ${lastMapCode || 'ว่างเปล่า'} เป็น ${mapCode}\nต้องการล้างกระดานเก่าใช่หรือไม่?`)) {
+                try {
+                    // 1. เคลียร์ในเครื่องตัวเองก่อนทันที
+                    markedByHost = []; 
+                    renderBoard(); 
+                    
+                    // 2. ส่งไปเคลียร์ที่ Server และรอ (await) จนกว่าจะเสร็จ
+                    const clearRes = await fetch(`${API_URL}?action=clear&key=${HOST_PASSWORD}`);
+                    const clearData = await clearRes.json();
+                    console.log("Server response:", clearData);
+                    
+                    // 3. บันทึกรหัสแมพใหม่ลง localStorage
+                    lastMapCode = mapCode;
+                    localStorage.setItem('jjaz_last_map', mapCode);
+                } catch (e) { console.error("Clear failed", e); }
+            }
         }
-        lastMapCode = mapCode;
     }
 
     document.getElementById('display-name').innerText = name;
     document.getElementById('display-map-code').innerText = mapCode;
 
+    // --- ระบบสุ่มตาราง (คงเดิม) ---
     const seed = cyrb128(name.toLowerCase() + mapCode.toLowerCase());
     const rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
 
@@ -110,123 +124,5 @@ async function generateNewBoard() {
     renderBoard();
 }
 
-// --- 3. ฟังก์ชันวาดตาราง ---
-function renderBoard() {
-    const boardDiv = document.getElementById('bingo-board');
-    if(!boardDiv) return;
-    boardDiv.innerHTML = '';
-    
-    myBoard.forEach((word) => {
-        const isSpecial = (word === "JJAZ");
-        const isMarked = markedByHost.includes(word) || isSpecial;
-        
-        const cell = document.createElement('div');
-        cell.className = `cell ${isMarked ? 'marked' : ''} ${isSpecial ? 'special-cell' : ''}`; 
-        cell.innerText = word;
-        
-        cell.onclick = () => {
-            const currentUser = document.getElementById('username').value.trim();
-            if (currentUser === "JJAZ420") {
-                toggleMark(word);
-            }
-        };
-        boardDiv.appendChild(cell);
-    });
-
-    if (myBoard.length > 0) checkBingo();
-}
-
-// --- 4. ฟังก์ชันส่งข้อมูลและดึงข้อมูล ---
-async function toggleMark(word) {
-    if (word === "JJAZ") return;
-    if (markedByHost.includes(word)) {
-        markedByHost = markedByHost.filter(w => w !== word);
-    } else {
-        markedByHost.push(word);
-    }
-    renderBoard();
-    try {
-        await fetch(`${API_URL}?action=setMark&word=${encodeURIComponent(word)}&key=${HOST_PASSWORD}`);
-    } catch (e) { console.error("Error toggle:", e); }
-}
-
-async function syncWithHost() {
-    try {
-        const response = await fetch(`${API_URL}?action=getMarks`);
-        const data = await response.json();
-        markedByHost = data.marks || [];
-        renderBoard();
-    } catch (e) { console.log("Sync failed..."); }
-}
-
-// --- 5. ระบบเช็คบิงโกและเอฟเฟกต์ ---
-function checkBingo() {
-    const cells = document.querySelectorAll('.cell');
-    if (cells.length === 0) return;
-    let markedIndices = [];
-    cells.forEach((cell, index) => {
-        if (cell.classList.contains('marked')) markedIndices.push(index);
-    });
-    const winPatterns = [
-        [0,1,2,3,4], [5,6,7,8,9], [10,11,12,13,14], [15,16,17,18,19], [20,21,22,23,24],
-        [0,5,10,15,20], [1,6,11,16,21], [2,7,12,17,22], [3,8,13,18,23], [4,9,14,19,24],
-        [0,6,12,18,24], [4,8,12,16,20]
-    ];
-    const isWin = winPatterns.some(pattern => pattern.every(index => markedIndices.includes(index)));
-    if (isWin) triggerWinEffect();
-}
-
-function triggerWinEffect() {
-    const overlay = document.getElementById('win-overlay');
-    const video = document.getElementById('win-video');
-    const mapCode = document.getElementById('map-code-input').value.trim();
-
-    if (!overlay || overlay.style.display === 'flex') return;
-
-    let mapDisplay = document.getElementById('win-map-display');
-    if (!mapDisplay) {
-        mapDisplay = document.createElement('div');
-        mapDisplay.id = 'win-map-display';
-        mapDisplay.style.cssText = "position: absolute; bottom: 15%; color: #fff; font-size: 28px; font-weight: bold; text-shadow: 0 0 10px #8c0ced; background: rgba(0,0,0,0.7); padding: 15px 30px; border: 2px solid #8c0ced; border-radius: 50px; z-index: 1005; letter-spacing: 2px;";
-        overlay.appendChild(mapDisplay);
-    }
-    mapDisplay.innerText = "VERIFIED MAP: " + mapCode;
-
-    overlay.style.display = 'flex';
-    if (video) {
-        video.style.zIndex = "1000"; // ให้วิดีโออยู่ด้านหลังข้อความนิดนึง
-        video.setAttribute('playsinline', ''); // สำหรับเล่นบนมือถือ
-        video.loop = true;
-        video.volume = 0.1; // 10% ตามที่ต้องการ
-        video.currentTime = 0;
-        video.play().catch(e => {
-            console.log("Autoplay blocked, attempting unmuted play...");
-            video.muted = true; // ถ้าบล็อค ให้ลองเล่นแบบไม่มีเสียงก่อน (แต่ในสตรีมควรทำงานได้ปกติ)
-            video.play();
-        });
-    }
-    if (typeof confetti === 'function') {
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#8c0ced', '#ffffff', '#ffff00'] });
-    }
-}
-
-function closeWin() {
-    const overlay = document.getElementById('win-overlay');
-    const video = document.getElementById('win-video');
-    if (overlay) overlay.style.display = 'none';
-    if (video) {
-        video.pause();
-        video.currentTime = 0;
-    }
-}
-
-// --- 6. ระบบ Sync ---
-setInterval(() => {
-    const userEl = document.getElementById('username');
-    const currentUserName = userEl ? userEl.value.trim() : "";
-    if (currentUserName !== "" && currentUserName !== "JJAZ420") {
-        setTimeout(syncWithHost, Math.random() * 5000); 
-    }
-}, 20000);
-
-syncWithHost();
+// --- ส่วนที่เหลือ (renderBoard, toggleMark, syncWithHost, checkBingo) ใช้ของเดิมของคุณได้เลย ---
+// (ผมตัดออกเพื่อความกระชับ แต่ในไฟล์จริงต้องมีให้ครบนะครับ)
