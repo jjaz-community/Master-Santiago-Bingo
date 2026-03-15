@@ -5,7 +5,7 @@ let markedByHost = [];
 let lastMapCode = ""; 
 
 const BINGO_WORDS = [
-  "NS WIN", "NRG WIN", "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
+  "NS WIN", "PRX WIN", "ACE", "OP NO SCOPE", "KNIFE", "SHORTY KILLED", "1V3", "THRIFTY", "BLINDED KILLED", 
   "FLAWLESS", "TEAM ACE", "THROUGH SMOKE", "EWW WHIFFED", "TECH PAUSE", "MOLLY KILLED",
   "RIOT BUDDY", "DEFUSE < 1 SEC", "INSANE SHOT", "6-7 DETECT", "เสี่ยโดเนท 500", "30 KILLS",
   "BUFF", "OVERTIME", "USELESS TIMEOUT"
@@ -71,7 +71,7 @@ async function generateNewBoard() {
     const rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
 
     const teamA = "NS WIN";
-    const teamB = "NRG WIN";
+    const teamB = "PRX WIN";
     const centerIndex = 12;
 
     let otherWords = BINGO_WORDS.filter(w => w !== teamA && w !== teamB);
